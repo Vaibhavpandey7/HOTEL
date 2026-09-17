@@ -397,8 +397,9 @@
           </div>
         </div>
         <div class="qr-target-switcher">
-          <button class="qr-switch-btn active" id="btnLanIp" onclick="switchQrHost('lan')">📶 Phone Wi-Fi (172.16.71.216)</button>
-          <button class="qr-switch-btn" id="btnLocalhost" onclick="switchQrHost('local')">💻 Laptop (localhost)</button>
+          <button class="qr-switch-btn active" id="btnTunnel" onclick="switchQrHost('tunnel')">🌐 Public HTTPS (All Phones & Networks)</button>
+          <button class="qr-switch-btn" id="btnLanIp" onclick="switchQrHost('lan')">📶 Wi-Fi IP (172.16.71.216)</button>
+          <button class="qr-switch-btn" id="btnLocalhost" onclick="switchQrHost('local')">💻 Localhost</button>
         </div>
       </div>
 
@@ -862,12 +863,15 @@
     });
 
     // ===== SMART QR CODE GENERATION =====
-    let currentQrMode = (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') ? 'lan' : 'current';
+    const TUNNEL_URL = 'https://a4ee0537aeb823.lhr.life/';
+    let currentQrMode = (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') ? 'tunnel' : 'current';
     const LAN_IP = '172.16.71.216';
     const PORT = window.location.port || '8080';
 
     function getBaseUrl() {
-      if (currentQrMode === 'lan') {
+      if (currentQrMode === 'tunnel') {
+        return TUNNEL_URL;
+      } else if (currentQrMode === 'lan') {
         return 'http://' + LAN_IP + (PORT ? ':' + PORT : '') + '/';
       } else if (currentQrMode === 'local') {
         return 'http://localhost' + (PORT ? ':' + PORT : '') + '/';
@@ -923,8 +927,10 @@
       // Update target hint
       const hint = document.getElementById('qrTargetHint');
       if (hint) {
-        if (currentQrMode === 'lan') {
-          hint.innerHTML = 'Encoding phone Wi-Fi URL: <strong style="color:var(--green-dark);">' + base + '</strong> (Ready to scan from real phones on Wi-Fi)';
+        if (currentQrMode === 'tunnel') {
+          hint.innerHTML = 'Encoding live secure URL: <strong style="color:var(--green-dark);">' + base + '</strong> (Scannable from ANY smartphone & mobile network)';
+        } else if (currentQrMode === 'lan') {
+          hint.innerHTML = 'Encoding local Wi-Fi URL: <strong style="color:var(--green-dark);">' + base + '</strong> (Phones on same Wi-Fi)';
         } else {
           hint.innerHTML = 'Encoding local URL: <strong style="color:var(--green-dark);">' + base + '</strong> (For browser testing on this laptop)';
         }
@@ -933,12 +939,12 @@
 
     function switchQrHost(mode) {
       currentQrMode = mode;
+      const btnTunnel = document.getElementById('btnTunnel');
       const btnLan = document.getElementById('btnLanIp');
       const btnLocal = document.getElementById('btnLocalhost');
-      if (btnLan && btnLocal) {
-        btnLan.classList.toggle('active', mode === 'lan');
-        btnLocal.classList.toggle('active', mode === 'local');
-      }
+      if (btnTunnel) btnTunnel.classList.toggle('active', mode === 'tunnel');
+      if (btnLan) btnLan.classList.toggle('active', mode === 'lan');
+      if (btnLocal) btnLocal.classList.toggle('active', mode === 'local');
       renderQRCodes();
     }
 
