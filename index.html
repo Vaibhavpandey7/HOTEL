@@ -52,6 +52,14 @@
       <div class="hero-badge">Dehradun's Heritage Retreat</div>
       <h1>Welcome to <em>HOTEL</em></h1>
       <p>Where timeless elegance meets warm Doon Valley hospitality. Step into a legacy of comfort, heritage charm, and heartfelt service — right in the heart of Dehradun.</p>
+      <div class="hero-live-status">
+        <span class="live-pulse-dot"></span>
+        <span>Live Status:</span>
+        <span class="status-highlight" id="heroRoomStat">7 Rooms Available</span>
+        <span>•</span>
+        <span class="status-highlight" id="heroTableStat">9 / 14 Tables Occupied (5 Free)</span>
+        <a href="#rooms">Check Rooms →</a>
+      </div>
       <div class="hero-btns">
         <a href="#booking" class="btn-primary" id="heroBookBtn">Book Your Stay ✦</a>
         <a href="#rooms" class="btn-secondary">Explore Rooms</a>
@@ -113,10 +121,28 @@
       <h2 class="section-title reveal">Our Rooms &amp; Suites</h2>
       <div class="gold-line reveal"></div>
       <p class="section-subtitle reveal">Each room is thoughtfully designed to offer heritage charm with every modern comfort</p>
+
+      <!-- Live Room Inventory Bar -->
+      <div class="inventory-bar reveal">
+        <div class="inventory-title-group">
+          <div class="inventory-icon">🏨</div>
+          <div>
+            <h4>Live Room Inventory</h4>
+            <p>Real-time booking status for today in Dehradun</p>
+          </div>
+        </div>
+        <div class="inventory-stats">
+          <div class="stat-pill total">Total Rooms: 24</div>
+          <div class="stat-pill avail" id="pillRoomsAvail">🟢 <span id="availCount">7</span> Available</div>
+          <div class="stat-pill occupied" id="pillRoomsOcc">🔴 <span id="occCount">17</span> Occupied (71%)</div>
+        </div>
+      </div>
+
       <div class="rooms-grid">
         <!-- Room 1 -->
         <div class="room-card reveal">
           <div class="room-img">
+            <div class="room-stock-tag avail" id="stockRoom1">🟢 <span id="stockCount1">3</span> Available</div>
             <img src="images/room-heritage-deluxe.jpg" alt="Heritage Deluxe Room" loading="lazy">
             <div class="room-price-tag">₹4,500 / night</div>
           </div>
@@ -131,6 +157,7 @@
         <!-- Room 2 -->
         <div class="room-card reveal">
           <div class="room-img">
+            <div class="room-stock-tag low" id="stockRoom2">🟡 <span id="stockCount2">2</span> Left Today</div>
             <img src="images/room-garden-view.jpg" alt="Premium Garden View Room" loading="lazy">
             <div class="room-price-tag">₹5,800 / night</div>
           </div>
@@ -145,6 +172,7 @@
         <!-- Room 3 -->
         <div class="room-card reveal">
           <div class="room-img">
+            <div class="room-stock-tag critical" id="stockRoom3">🔴 <span id="stockCount3">1</span> Left (High Demand)</div>
             <img src="images/room-grand-suite.jpg" alt="Grand Suite" loading="lazy">
             <div class="room-price-tag">₹9,200 / night</div>
           </div>
@@ -159,6 +187,7 @@
         <!-- Room 4 -->
         <div class="room-card reveal">
           <div class="room-img">
+            <div class="room-stock-tag avail" id="stockRoom4">🟢 <span id="stockCount4">1</span> Available</div>
             <img src="images/room-executive.jpg" alt="Executive Room" loading="lazy">
             <div class="room-price-tag">₹6,500 / night</div>
           </div>
@@ -310,6 +339,33 @@
             <p>Traditional Kumaoni chocolate fudge coated in sugar balls — the perfect sweet ending</p>
             <div class="price">₹180</div>
           </div>
+        </div>
+      </div>
+
+      <!-- Live Table Occupancy & Interactive Floor View -->
+      <div class="table-occupancy-section reveal" id="tableOccupancySection">
+        <div class="table-occupancy-header">
+          <div>
+            <h3>🍽️ Live Table Occupancy &amp; Seating Status</h3>
+            <p>Real-time seating floor plan for The Grand Kitchen &amp; Courtyard Terrace</p>
+          </div>
+          <div class="table-stats-row">
+            <div class="stat-pill total">Total: 14 Tables</div>
+            <div class="stat-pill occupied" id="pillTablesOcc">🔴 <span id="tablesOccCount">9</span> Occupied</div>
+            <div class="stat-pill avail" id="pillTablesAvail">🟢 <span id="tablesAvailCount">5</span> Available</div>
+            <div class="stat-pill total" style="background:var(--white);">⏱️ Est. Wait: <span id="tablesWaitTime">&lt; 5 mins</span></div>
+          </div>
+        </div>
+
+        <!-- Founder Pitch / Staff Live Demo Control -->
+        <div class="pitch-control-panel">
+          <span>⚡ <strong>Pitch Live Demo:</strong> Tap any table below to toggle its status (Occupied ↔ Available) in real time</span>
+          <button class="pitch-mode-btn" onclick="toggleRandomTable()">Simulate Table Turn ↺</button>
+        </div>
+
+        <!-- 14-Table Floor Grid -->
+        <div class="floor-grid" id="floorGrid">
+          <!-- Rendered dynamically by JavaScript -->
         </div>
       </div>
     </div>
@@ -790,6 +846,18 @@
         <div class="detail-row"><span class="detail-label">Duration</span><span class="detail-value">${nights} night${nights > 1 ? 's' : ''}</span></div>
       `;
 
+      // Real-time Inventory update on booking
+      if (roomType.includes('Heritage Deluxe')) {
+        if (roomInventory.room1 > 0) roomInventory.room1--;
+      } else if (roomType.includes('Premium Garden')) {
+        if (roomInventory.room2 > 0) roomInventory.room2--;
+      } else if (roomType.includes('Grand Suite')) {
+        if (roomInventory.room3 > 0) roomInventory.room3--;
+      } else if (roomType.includes('Executive')) {
+        if (roomInventory.room4 > 0) roomInventory.room4--;
+      }
+      updateRoomInventoryUI();
+
       // Transition
       bookingForm.style.display = 'none';
       bookingConfirmation.classList.add('active');
@@ -861,6 +929,135 @@
         }
       });
     });
+
+    // ===== LIVE ROOM INVENTORY & TABLE OCCUPANCY STATE =====
+    const TOTAL_ROOMS = 24;
+    const roomInventory = {
+      room1: 3, // Heritage Deluxe
+      room2: 2, // Premium Garden View
+      room3: 1, // Grand Suite
+      room4: 1  // Executive Room
+    };
+
+    function updateRoomInventoryUI() {
+      const avail = roomInventory.room1 + roomInventory.room2 + roomInventory.room3 + roomInventory.room4;
+      const occupied = TOTAL_ROOMS - avail;
+      const occPct = Math.round((occupied / TOTAL_ROOMS) * 100);
+
+      // Hero ticker
+      const heroRoom = document.getElementById('heroRoomStat');
+      if (heroRoom) heroRoom.textContent = `${avail} Rooms Available`;
+
+      // Summary bar in #rooms
+      const availEl = document.getElementById('availCount');
+      const occEl = document.getElementById('occCount');
+      if (availEl) availEl.textContent = avail;
+      if (occEl) occEl.textContent = `${occupied} Occupied (${occPct}%)`;
+
+      // Room 1 badge
+      const s1 = document.getElementById('stockRoom1');
+      if (s1) {
+        s1.className = 'room-stock-tag ' + (roomInventory.room1 <= 1 ? 'critical' : roomInventory.room1 <= 2 ? 'low' : 'avail');
+        s1.innerHTML = (roomInventory.room1 <= 1 ? '🔴 ' : roomInventory.room1 <= 2 ? '🟡 ' : '🟢 ') +
+          `<span id="stockCount1">${roomInventory.room1}</span> ` +
+          (roomInventory.room1 === 0 ? 'Sold Out Today' : roomInventory.room1 === 1 ? 'Only 1 Left' : 'Available');
+      }
+
+      // Room 2 badge
+      const s2 = document.getElementById('stockRoom2');
+      if (s2) {
+        s2.className = 'room-stock-tag ' + (roomInventory.room2 <= 1 ? 'critical' : roomInventory.room2 <= 2 ? 'low' : 'avail');
+        s2.innerHTML = (roomInventory.room2 <= 1 ? '🔴 ' : roomInventory.room2 <= 2 ? '🟡 ' : '🟢 ') +
+          `<span id="stockCount2">${roomInventory.room2}</span> ` +
+          (roomInventory.room2 === 0 ? 'Sold Out' : roomInventory.room2 === 1 ? 'Only 1 Left' : 'Left Today');
+      }
+
+      // Room 3 badge
+      const s3 = document.getElementById('stockRoom3');
+      if (s3) {
+        s3.className = 'room-stock-tag ' + (roomInventory.room3 <= 1 ? 'critical' : 'avail');
+        s3.innerHTML = (roomInventory.room3 <= 1 ? '🔴 ' : '🟢 ') +
+          `<span id="stockCount3">${roomInventory.room3}</span> ` +
+          (roomInventory.room3 === 0 ? 'Sold Out' : 'Left (High Demand)');
+      }
+
+      // Room 4 badge
+      const s4 = document.getElementById('stockRoom4');
+      if (s4) {
+        s4.className = 'room-stock-tag ' + (roomInventory.room4 <= 1 ? 'low' : 'avail');
+        s4.innerHTML = (roomInventory.room4 <= 1 ? '🟡 ' : '🟢 ') +
+          `<span id="stockCount4">${roomInventory.room4}</span> ` +
+          (roomInventory.room4 === 0 ? 'Sold Out' : 'Available');
+      }
+    }
+
+    // 14 Dining Tables data
+    const tablesData = [
+      { id: 1, name: "Table 1", cap: "2-Seater (Window)", occ: true },
+      { id: 2, name: "Table 2", cap: "4-Seater (Hall)", occ: false },
+      { id: 3, name: "Table 3", cap: "4-Seater (Hall)", occ: true },
+      { id: 4, name: "Table 4", cap: "6-Seater (Booth)", occ: false },
+      { id: 5, name: "Table 5", cap: "2-Seater (Garden)", occ: true },
+      { id: 6, name: "Table 6", cap: "4-Seater (Garden)", occ: true },
+      { id: 7, name: "Table 7", cap: "4-Seater (Courtyard)", occ: true, qr: true },
+      { id: 8, name: "Table 8", cap: "2-Seater (Courtyard)", occ: true },
+      { id: 9, name: "Table 9", cap: "8-Seater (Family)", occ: false },
+      { id: 10, name: "Table 10", cap: "4-Seater (Hall)", occ: true },
+      { id: 11, name: "Table 11", cap: "4-Seater (Garden)", occ: true },
+      { id: 12, name: "Table 12", cap: "2-Seater (Window)", occ: false },
+      { id: 13, name: "Table 13", cap: "6-Seater (Booth)", occ: true },
+      { id: 14, name: "Table 14", cap: "4-Seater (Terrace)", occ: false }
+    ];
+
+    function renderTables() {
+      const grid = document.getElementById('floorGrid');
+      if (!grid) return;
+      grid.innerHTML = '';
+
+      let occCount = 0;
+
+      tablesData.forEach(t => {
+        if (t.occ) occCount++;
+        const card = document.createElement('div');
+        card.className = `table-card ${t.occ ? 'occupied' : 'available'} ${t.qr ? 'active-qr' : ''}`;
+        card.onclick = () => toggleTable(t.id);
+        card.title = 'Click to toggle status (Occupied / Available)';
+
+        card.innerHTML = `
+          ${t.qr ? '<span class="table-qr-badge">QR DEMO</span>' : ''}
+          <div class="table-number">${t.name}</div>
+          <div class="table-capacity">${t.cap}</div>
+          <span class="table-status-pill ${t.occ ? 'occ' : 'free'}">${t.occ ? 'Occupied' : 'Available'}</span>
+        `;
+        grid.appendChild(card);
+      });
+
+      const freeCount = tablesData.length - occCount;
+      const occEl = document.getElementById('tablesOccCount');
+      const freeEl = document.getElementById('tablesAvailCount');
+      const waitEl = document.getElementById('tablesWaitTime');
+      const heroTable = document.getElementById('heroTableStat');
+
+      if (occEl) occEl.textContent = occCount;
+      if (freeEl) freeEl.textContent = freeCount;
+      if (waitEl) waitEl.textContent = freeCount > 2 ? '< 5 mins' : freeCount > 0 ? '10-15 mins' : '25-30 mins';
+      if (heroTable) heroTable.textContent = `${occCount} / ${tablesData.length} Tables Occupied (${freeCount} Free)`;
+    }
+
+    function toggleTable(id) {
+      const table = tablesData.find(t => t.id === id);
+      if (table) {
+        table.occ = !table.occ;
+        renderTables();
+      }
+    }
+
+    function toggleRandomTable() {
+      // Find a random table to toggle for pitch demonstration
+      const randomIndex = Math.floor(Math.random() * tablesData.length);
+      tablesData[randomIndex].occ = !tablesData[randomIndex].occ;
+      renderTables();
+    }
 
     // ===== SMART QR CODE GENERATION =====
     const TUNNEL_URL = 'https://a4ee0537aeb823.lhr.life/';
@@ -948,11 +1145,17 @@
       renderQRCodes();
     }
 
+    function initOccupancy() {
+      updateRoomInventoryUI();
+      renderTables();
+      renderQRCodes();
+    }
+
     // Initialize when DOM and scripts ready
     if (document.readyState === 'loading') {
-      document.addEventListener('DOMContentLoaded', renderQRCodes);
+      document.addEventListener('DOMContentLoaded', initOccupancy);
     } else {
-      setTimeout(renderQRCodes, 100);
+      setTimeout(initOccupancy, 50);
     }
   </script>
   <script src="qrcode.min.js" onload="renderQRCodes()"></script>

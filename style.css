@@ -357,6 +357,159 @@ input:focus, select:focus, textarea:focus {
   font-weight: 500;
 }
 
+/* ===== LIVE PROPERTY STATUS TICKER ===== */
+.hero-live-status {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  background: rgba(27, 67, 50, 0.85);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1px solid rgba(201, 162, 39, 0.45);
+  padding: 8px 20px;
+  border-radius: 50px;
+  margin-bottom: 24px;
+  font-size: 0.86rem;
+  color: var(--white);
+  box-shadow: 0 4px 20px rgba(0,0,0,0.25);
+  flex-wrap: wrap;
+  justify-content: center;
+}
+.live-pulse-dot {
+  width: 9px;
+  height: 9px;
+  background: #2ECC71;
+  border-radius: 50%;
+  box-shadow: 0 0 10px #2ECC71;
+  animation: livePulse 1.8s infinite;
+  display: inline-block;
+}
+@keyframes livePulse {
+  0% { transform: scale(0.95); opacity: 0.8; box-shadow: 0 0 0 0 rgba(46, 204, 113, 0.7); }
+  70% { transform: scale(1.3); opacity: 1; box-shadow: 0 0 0 8px rgba(46, 204, 113, 0); }
+  100% { transform: scale(0.95); opacity: 0.8; box-shadow: 0 0 0 0 rgba(46, 204, 113, 0); }
+}
+.hero-live-status span.status-highlight {
+  color: var(--gold-pale);
+  font-weight: 700;
+}
+.hero-live-status a {
+  color: var(--gold);
+  text-decoration: underline;
+  font-weight: 600;
+  margin-left: 4px;
+  transition: color var(--transition);
+}
+.hero-live-status a:hover {
+  color: var(--white);
+}
+
+/* ===== ROOMS INVENTORY STATUS BAR ===== */
+.inventory-bar {
+  background: var(--white);
+  border: 1px solid rgba(201, 162, 39, 0.3);
+  border-radius: var(--radius-lg);
+  padding: 18px 24px;
+  margin-bottom: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 16px;
+  box-shadow: var(--shadow-sm);
+}
+.inventory-title-group {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.inventory-icon {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: rgba(201, 162, 39, 0.15);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.4rem;
+  flex-shrink: 0;
+}
+.inventory-title-group h4 {
+  font-family: 'Inter', sans-serif;
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: var(--green-dark);
+  margin-bottom: 2px;
+}
+.inventory-title-group p {
+  font-size: 0.8rem;
+  color: var(--text-light);
+}
+.inventory-stats {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+.stat-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 14px;
+  border-radius: 50px;
+  font-size: 0.8rem;
+  font-weight: 700;
+  border: 1px solid transparent;
+}
+.stat-pill.avail {
+  background: rgba(39, 174, 96, 0.12);
+  color: #1e824c;
+  border-color: rgba(39, 174, 96, 0.3);
+}
+.stat-pill.occupied {
+  background: rgba(231, 76, 60, 0.1);
+  color: #c0392b;
+  border-color: rgba(231, 76, 60, 0.3);
+}
+.stat-pill.total {
+  background: var(--cream);
+  color: var(--charcoal);
+  border-color: #D5D0C4;
+}
+
+/* Room Stock Tag inside card */
+.room-stock-tag {
+  position: absolute;
+  top: 12px;
+  left: 12px;
+  padding: 5px 12px;
+  border-radius: 50px;
+  font-size: 0.74rem;
+  font-weight: 700;
+  letter-spacing: 0.4px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.25);
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  z-index: 2;
+  transition: all var(--transition);
+}
+.room-stock-tag.avail {
+  background: #1B4332;
+  color: #82E0AA;
+  border: 1px solid rgba(130, 224, 170, 0.45);
+}
+.room-stock-tag.low {
+  background: #7D6608;
+  color: #F9E79F;
+  border: 1px solid rgba(249, 231, 159, 0.5);
+}
+.room-stock-tag.critical {
+  background: #78281F;
+  color: #F5B7B1;
+  border: 1px solid rgba(245, 183, 177, 0.5);
+}
+
 /* ===== BOOKING ===== */
 .booking { background: var(--green-dark); color: var(--white); }
 .booking .section-title { color: var(--white); }
@@ -527,6 +680,156 @@ input:focus, select:focus, textarea:focus {
   color: var(--gold);
   font-size: 0.9rem;
   margin-top: 6px;
+}
+
+/* ===== RESTAURANT TABLE OCCUPANCY ===== */
+.table-occupancy-section {
+  margin-top: 48px;
+  background: var(--cream);
+  border-radius: var(--radius-lg);
+  padding: 32px 28px;
+  border: 1px solid rgba(201, 162, 39, 0.3);
+  box-shadow: var(--shadow-sm);
+}
+.table-occupancy-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 16px;
+  margin-bottom: 20px;
+}
+.table-occupancy-header h3 {
+  font-size: 1.3rem;
+  color: var(--green-dark);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 4px;
+}
+.table-occupancy-header p {
+  color: var(--text-light);
+  font-size: 0.86rem;
+}
+.table-stats-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+/* Pitch / Staff Interactive Simulation Toggle */
+.pitch-control-panel {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: var(--white);
+  padding: 12px 18px;
+  border-radius: var(--radius);
+  border: 1px dashed rgba(201, 162, 39, 0.6);
+  margin-bottom: 22px;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+.pitch-control-panel span {
+  font-size: 0.82rem;
+  color: var(--text-body);
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.pitch-mode-btn {
+  background: var(--green-dark);
+  color: var(--gold-pale);
+  border: 1px solid rgba(201, 162, 39, 0.4);
+  padding: 6px 16px;
+  border-radius: 50px;
+  font-size: 0.78rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all var(--transition);
+}
+.pitch-mode-btn:hover {
+  background: var(--gold);
+  color: var(--green-dark);
+  box-shadow: 0 2px 8px rgba(201,162,39,0.3);
+}
+
+/* Floor Grid */
+.floor-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+  gap: 14px;
+}
+.table-card {
+  background: var(--white);
+  border-radius: var(--radius);
+  padding: 14px 10px;
+  text-align: center;
+  border: 1.5px solid transparent;
+  box-shadow: var(--shadow-sm);
+  transition: all var(--transition);
+  cursor: pointer;
+  position: relative;
+}
+.table-card:hover {
+  transform: translateY(-3px);
+  box-shadow: var(--shadow-md);
+}
+.table-card.occupied {
+  border-color: rgba(231, 76, 60, 0.35);
+  background: #FFFDFD;
+}
+.table-card.available {
+  border-color: rgba(39, 174, 96, 0.4);
+  background: #FDFEFE;
+}
+.table-card.active-qr {
+  border-color: var(--gold);
+  box-shadow: 0 0 12px rgba(201, 162, 39, 0.35);
+}
+.table-number {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: var(--green-dark);
+  margin-bottom: 2px;
+}
+.table-capacity {
+  font-size: 0.72rem;
+  color: var(--text-light);
+  margin-bottom: 8px;
+}
+.table-status-pill {
+  display: inline-block;
+  padding: 3px 8px;
+  border-radius: 50px;
+  font-size: 0.68rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+}
+.table-status-pill.occ {
+  background: rgba(231, 76, 60, 0.12);
+  color: #c0392b;
+}
+.table-status-pill.free {
+  background: rgba(39, 174, 96, 0.14);
+  color: #1e824c;
+}
+.table-qr-badge {
+  position: absolute;
+  top: -6px;
+  right: -6px;
+  background: var(--gold);
+  color: var(--green-dark);
+  font-size: 0.6rem;
+  font-weight: 800;
+  padding: 2px 7px;
+  border-radius: 50px;
+  border: 1px solid var(--white);
+  box-shadow: 0 2px 6px rgba(0,0,0,0.15);
 }
 
 /* ===== GALLERY ===== */
