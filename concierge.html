@@ -1,0 +1,355 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>HOTEL — Your Room Concierge</title>
+  <meta name="description" content="Your digital concierge at HOTEL, Dehradun. Request services, explore amenities, and get help — all from your phone.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Playfair+Display:wght@400;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --green-dark: #1B4332;
+      --green-mid: #2D5A3D;
+      --gold: #C9A227;
+      --gold-light: #D4AF37;
+      --gold-pale: #E8D48B;
+      --ivory: #FAF6EE;
+      --cream: #F5F0E3;
+      --charcoal: #2C2C2C;
+      --text-body: #3A3A3A;
+      --text-light: #6B6B6B;
+      --white: #FFFFFF;
+      --success: #27AE60;
+      --shadow-sm: 0 2px 8px rgba(0,0,0,0.08);
+      --shadow-md: 0 4px 20px rgba(0,0,0,0.12);
+      --radius: 12px;
+      --radius-lg: 20px;
+      --transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    *,*::before,*::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body { font-family: 'Inter', sans-serif; background: var(--ivory); color: var(--text-body); line-height: 1.6; }
+    h1,h2,h3 { font-family: 'Playfair Display', serif; color: var(--green-dark); line-height: 1.2; }
+
+    /* Header */
+    .c-header { background: var(--green-dark); padding: 16px 20px; position: sticky; top: 0; z-index: 100; }
+    .c-header-inner { max-width: 600px; margin: 0 auto; display: flex; align-items: center; justify-content: space-between; }
+    .c-logo { font-family: 'Playfair Display', serif; font-size: 1.3rem; font-weight: 700; color: var(--gold); }
+    .c-room-badge { background: rgba(201,162,39,0.15); border: 1px solid rgba(201,162,39,0.4); color: var(--gold-pale); font-size: 0.78rem; font-weight: 600; letter-spacing: 1.5px; text-transform: uppercase; padding: 5px 14px; border-radius: 50px; }
+
+    /* Welcome */
+    .c-welcome { background: linear-gradient(135deg, var(--green-dark), var(--green-mid)); color: var(--white); padding: 28px 20px 32px; text-align: center; }
+    .c-welcome h1 { color: var(--white); font-size: 1.5rem; margin-bottom: 4px; }
+    .c-welcome h1 em { font-style: normal; color: var(--gold); }
+    .c-welcome p { color: rgba(255,255,255,0.7); font-size: 0.9rem; }
+    .c-welcome .room-name { color: var(--gold-pale); font-weight: 700; }
+
+    /* Content */
+    .c-content { max-width: 600px; margin: 0 auto; padding: 20px 16px 40px; }
+    .c-section-title { font-size: 1rem; font-family: 'Inter', sans-serif; font-weight: 700; color: var(--text-light); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 14px; margin-top: 28px; display: flex; align-items: center; gap: 8px; }
+    .c-section-title:first-child { margin-top: 0; }
+
+    /* Quick Actions Grid */
+    .c-actions { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
+    .c-action-card { background: var(--white); border-radius: var(--radius); padding: 18px 12px; text-align: center; box-shadow: var(--shadow-sm); cursor: pointer; transition: all var(--transition); border: 2px solid transparent; }
+    .c-action-card:hover { border-color: var(--gold); transform: translateY(-2px); box-shadow: var(--shadow-md); }
+    .c-action-card.active { border-color: var(--success); background: rgba(39,174,96,0.04); }
+    .c-action-emoji { font-size: 1.8rem; margin-bottom: 6px; }
+    .c-action-label { font-size: 0.78rem; font-weight: 700; color: var(--charcoal); line-height: 1.3; }
+
+    /* Info Cards */
+    .c-info-card { background: var(--white); border-radius: var(--radius); padding: 18px 20px; margin-bottom: 12px; box-shadow: var(--shadow-sm); display: flex; align-items: center; gap: 14px; }
+    .c-info-icon { width: 44px; height: 44px; border-radius: 10px; background: var(--cream); display: flex; align-items: center; justify-content: center; font-size: 1.3rem; flex-shrink: 0; }
+    .c-info-text h4 { font-family: 'Inter', sans-serif; font-size: 0.9rem; font-weight: 700; color: var(--charcoal); }
+    .c-info-text p { font-size: 0.82rem; color: var(--text-light); }
+
+    /* Request Modal */
+    .c-modal-overlay { display: none; position: fixed; inset: 0; z-index: 300; background: rgba(0,0,0,0.5); }
+    .c-modal-overlay.active { display: block; }
+    .c-modal { display: none; position: fixed; bottom: 0; left: 0; right: 0; z-index: 310; background: var(--white); border-radius: 24px 24px 0 0; max-height: 80vh; overflow-y: auto; animation: slideUp 0.35s cubic-bezier(0.4, 0, 0.2, 1); }
+    .c-modal.active { display: block; }
+    @keyframes slideUp { from{transform:translateY(100%)} to{transform:translateY(0)} }
+    .c-modal-handle { text-align: center; padding: 12px 0 4px; }
+    .c-modal-handle span { display: inline-block; width: 40px; height: 4px; background: #D0D0D0; border-radius: 4px; }
+    .c-modal-header { display: flex; align-items: center; justify-content: space-between; padding: 8px 24px 16px; }
+    .c-modal-header h2 { font-size: 1.2rem; }
+    .c-modal-close { background: none; border: none; font-size: 1.5rem; color: var(--text-light); cursor: pointer; }
+    .c-modal-body { padding: 0 24px 32px; }
+
+    /* Success Toast */
+    .c-toast { position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%) translateY(100px); z-index: 500; background: var(--green-dark); color: var(--white); padding: 14px 28px; border-radius: 50px; font-weight: 700; font-size: 0.9rem; box-shadow: var(--shadow-md); transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1); display: flex; align-items: center; gap: 8px; white-space: nowrap; }
+    .c-toast.visible { transform: translateX(-50%) translateY(0); }
+
+    /* Buttons */
+    .c-btn { display: flex; align-items: center; justify-content: center; gap: 8px; width: 100%; padding: 14px; background: linear-gradient(135deg, var(--gold), var(--gold-light)); color: var(--green-dark); font-weight: 800; font-size: 0.95rem; border: none; border-radius: 14px; cursor: pointer; transition: all var(--transition); box-shadow: 0 4px 15px rgba(201,162,39,0.3); margin-top: 16px; }
+    .c-btn:hover { transform: translateY(-2px); box-shadow: 0 6px 25px rgba(201,162,39,0.45); }
+
+    /* Form elements */
+    .c-form-group { margin-bottom: 14px; }
+    .c-form-group label { display: block; font-size: 0.82rem; font-weight: 700; color: var(--text-body); margin-bottom: 5px; }
+    .c-form-group select, .c-form-group textarea, .c-form-group input { width: 100%; padding: 12px 14px; border: 1.5px solid #D5D0C4; border-radius: 8px; font-family: 'Inter', sans-serif; font-size: 0.95rem; background: var(--white); color: var(--charcoal); transition: border-color var(--transition); }
+    .c-form-group select:focus, .c-form-group textarea:focus, .c-form-group input:focus { outline: none; border-color: var(--gold); box-shadow: 0 0 0 3px rgba(201,162,39,0.15); }
+    .c-form-group textarea { min-height: 80px; resize: vertical; }
+
+    @media (max-width: 380px) { .c-actions { grid-template-columns: repeat(2, 1fr); } }
+  </style>
+</head>
+<body>
+  <!-- Header -->
+  <header class="c-header">
+    <div class="c-header-inner">
+      <a href="index.html" class="c-logo" style="text-decoration:none;color:var(--gold);">HOTEL</a>
+      <div style="display:flex;align-items:center;gap:10px;">
+        <a href="index.html" style="font-size:0.78rem;color:rgba(255,255,255,0.75);text-decoration:none;font-weight:500;">← Main Site</a>
+        <div class="c-room-badge" id="roomBadge">Room 301</div>
+      </div>
+    </div>
+  </header>
+
+  <!-- Welcome -->
+  <div class="c-welcome">
+    <h1>Welcome, <em>Guest</em></h1>
+    <p>Your digital concierge for <span class="room-name" id="roomLabel">Heritage Deluxe Room — 301</span></p>
+  </div>
+
+  <!-- Content -->
+  <div class="c-content">
+    <!-- Quick Services -->
+    <div class="c-section-title">🛎️ Quick Services</div>
+    <div class="c-actions">
+      <div class="c-action-card" onclick="requestService('housekeeping')">
+        <div class="c-action-emoji">🧹</div>
+        <div class="c-action-label">Housekeeping</div>
+      </div>
+      <div class="c-action-card" onclick="requestService('towels')">
+        <div class="c-action-emoji">🛁</div>
+        <div class="c-action-label">Extra Towels</div>
+      </div>
+      <div class="c-action-card" onclick="requestService('roomservice')">
+        <div class="c-action-emoji">🍽️</div>
+        <div class="c-action-label">Room Service</div>
+      </div>
+      <div class="c-action-card" onclick="requestService('laundry')">
+        <div class="c-action-emoji">👔</div>
+        <div class="c-action-label">Laundry</div>
+      </div>
+      <div class="c-action-card" onclick="requestService('checkout')">
+        <div class="c-action-emoji">🔑</div>
+        <div class="c-action-label">Late Check-out</div>
+      </div>
+      <div class="c-action-card" onclick="requestService('maintenance')">
+        <div class="c-action-emoji">🔧</div>
+        <div class="c-action-label">Maintenance</div>
+      </div>
+    </div>
+
+    <!-- Hotel Info -->
+    <div class="c-section-title">ℹ️ Hotel Information</div>
+    <div class="c-info-card">
+      <div class="c-info-icon">📶</div>
+      <div class="c-info-text">
+        <h4>Wi-Fi Access</h4>
+        <p>Network: <strong>HOTEL-GUEST</strong> &nbsp;|&nbsp; Password: <strong>welcome2024</strong></p>
+      </div>
+    </div>
+    <div class="c-info-card">
+      <div class="c-info-icon">🕐</div>
+      <div class="c-info-text">
+        <h4>Check-out Time</h4>
+        <p>12:00 PM &nbsp;|&nbsp; Late check-out available on request</p>
+      </div>
+    </div>
+    <div class="c-info-card">
+      <div class="c-info-icon">🍳</div>
+      <div class="c-info-text">
+        <h4>Breakfast</h4>
+        <p>7:00 AM – 10:30 AM &nbsp;|&nbsp; The Grand Kitchen, Ground Floor</p>
+      </div>
+    </div>
+    <div class="c-info-card">
+      <div class="c-info-icon">🏊</div>
+      <div class="c-info-text">
+        <h4>Pool & Spa</h4>
+        <p>6:00 AM – 9:00 PM &nbsp;|&nbsp; Towels at poolside reception</p>
+      </div>
+    </div>
+    <div class="c-info-card">
+      <div class="c-info-icon">📞</div>
+      <div class="c-info-text">
+        <h4>Front Desk</h4>
+        <p>Dial 0 from room phone &nbsp;|&nbsp; +91 135 265 7890</p>
+      </div>
+    </div>
+
+    <!-- Explore -->
+    <div class="c-section-title">🗺️ Explore Dehradun</div>
+    <div class="c-info-card">
+      <div class="c-info-icon">⛰️</div>
+      <div class="c-info-text">
+        <h4>Robber's Cave (Guchhupani)</h4>
+        <p>8 km away &nbsp;|&nbsp; ~25 min drive</p>
+      </div>
+    </div>
+    <div class="c-info-card">
+      <div class="c-info-icon">🏛️</div>
+      <div class="c-info-text">
+        <h4>Forest Research Institute</h4>
+        <p>5 km away &nbsp;|&nbsp; ~15 min drive</p>
+      </div>
+    </div>
+    <div class="c-info-card">
+      <div class="c-info-icon">🛍️</div>
+      <div class="c-info-text">
+        <h4>Paltan Bazaar</h4>
+        <p>3 km away &nbsp;|&nbsp; ~10 min drive &nbsp;|&nbsp; Local shopping</p>
+      </div>
+    </div>
+    <div class="c-info-card">
+      <div class="c-info-icon">🚡</div>
+      <div class="c-info-text">
+        <h4>Mussoorie (Queen of Hills)</h4>
+        <p>35 km away &nbsp;|&nbsp; ~1 hr drive &nbsp;|&nbsp; Day trip recommended</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast -->
+  <div class="c-toast" id="toast">✓ Request sent!</div>
+
+  <!-- Request Modal -->
+  <div class="c-modal-overlay" id="modalOverlay" onclick="closeModal()"></div>
+  <div class="c-modal" id="requestModal">
+    <div class="c-modal-handle"><span></span></div>
+    <div class="c-modal-header">
+      <h2 id="modalTitle">Service Request</h2>
+      <button class="c-modal-close" onclick="closeModal()">&times;</button>
+    </div>
+    <div class="c-modal-body" id="modalBody"></div>
+  </div>
+
+  <script>
+    // Parse URL params
+    const params = new URLSearchParams(window.location.search);
+    const room = params.get('room') || '301';
+    const roomType = params.get('type') || 'Heritage Deluxe Room';
+    document.getElementById('roomBadge').textContent = 'Room ' + room;
+    document.getElementById('roomLabel').textContent = roomType + ' — ' + room;
+
+    const serviceModals = {
+      housekeeping: {
+        title: '🧹 Housekeeping Request',
+        body: `
+          <div class="c-form-group">
+            <label>What do you need?</label>
+            <select><option>Full room cleaning</option><option>Bed making only</option><option>Bathroom cleaning</option><option>Trash pickup</option></select>
+          </div>
+          <div class="c-form-group">
+            <label>Preferred time</label>
+            <select><option>As soon as possible</option><option>Within 1 hour</option><option>After 2:00 PM</option><option>After 5:00 PM</option></select>
+          </div>
+          <div class="c-form-group">
+            <label>Any special notes?</label>
+            <textarea placeholder="E.g., please don't disturb before 11 AM"></textarea>
+          </div>
+          <button class="c-btn" onclick="submitRequest('Housekeeping')">Send Request ✦</button>`
+      },
+      towels: {
+        title: '🛁 Extra Towels',
+        body: `
+          <div class="c-form-group">
+            <label>How many towels?</label>
+            <select><option>1 towel</option><option>2 towels</option><option>3 towels</option><option>4 towels</option></select>
+          </div>
+          <div class="c-form-group">
+            <label>Type</label>
+            <select><option>Bath towels</option><option>Hand towels</option><option>Face towels</option><option>Pool towels</option></select>
+          </div>
+          <button class="c-btn" onclick="submitRequest('Extra Towels')">Send Request ✦</button>`
+      },
+      roomservice: {
+        title: '🍽️ Room Service',
+        body: `
+          <p style="font-size:0.9rem; color:var(--text-light); margin-bottom:16px;">Browse our full menu and order food directly to your room.</p>
+          <button class="c-btn" onclick="window.location.href='order.html?table=Room${room}'">Open Menu & Order ✦</button>`
+      },
+      laundry: {
+        title: '👔 Laundry Service',
+        body: `
+          <div class="c-form-group">
+            <label>Service type</label>
+            <select><option>Regular wash (24 hours)</option><option>Express wash (6 hours)</option><option>Dry cleaning (48 hours)</option><option>Ironing only (4 hours)</option></select>
+          </div>
+          <div class="c-form-group">
+            <label>Number of items (approx)</label>
+            <select><option>1–3 items</option><option>4–7 items</option><option>8–12 items</option><option>13+ items</option></select>
+          </div>
+          <div class="c-form-group">
+            <label>Pickup time</label>
+            <select><option>Send someone now</option><option>Within 1 hour</option><option>Tomorrow morning</option></select>
+          </div>
+          <button class="c-btn" onclick="submitRequest('Laundry')">Send Request ✦</button>`
+      },
+      checkout: {
+        title: '🔑 Late Check-out',
+        body: `
+          <p style="font-size:0.9rem; color:var(--text-light); margin-bottom:16px;">Standard check-out is 12:00 PM. Late check-out is subject to availability and may incur additional charges.</p>
+          <div class="c-form-group">
+            <label>Preferred check-out time</label>
+            <select><option>1:00 PM</option><option>2:00 PM</option><option>3:00 PM</option><option>4:00 PM</option><option>6:00 PM (half-day charge)</option></select>
+          </div>
+          <div class="c-form-group">
+            <label>Reason (optional)</label>
+            <textarea placeholder="E.g., late flight at 8 PM"></textarea>
+          </div>
+          <button class="c-btn" onclick="submitRequest('Late Check-out')">Send Request ✦</button>`
+      },
+      maintenance: {
+        title: '🔧 Maintenance Request',
+        body: `
+          <div class="c-form-group">
+            <label>Issue type</label>
+            <select><option>AC not working</option><option>Hot water issue</option><option>Light/electrical</option><option>TV/remote</option><option>Door/lock</option><option>Plumbing</option><option>Other</option></select>
+          </div>
+          <div class="c-form-group">
+            <label>Describe the issue</label>
+            <textarea placeholder="Please give us a brief description of the problem"></textarea>
+          </div>
+          <div class="c-form-group">
+            <label>Urgency</label>
+            <select><option>Can wait — fix when convenient</option><option>Needed within a few hours</option><option>Urgent — need help now</option></select>
+          </div>
+          <button class="c-btn" onclick="submitRequest('Maintenance')">Send Request ✦</button>`
+      }
+    };
+
+    function requestService(type) {
+      const config = serviceModals[type];
+      document.getElementById('modalTitle').textContent = config.title;
+      document.getElementById('modalBody').innerHTML = config.body;
+      document.getElementById('modalOverlay').classList.add('active');
+      document.getElementById('requestModal').classList.add('active');
+      document.body.style.overflow = 'hidden';
+    }
+
+    function closeModal() {
+      document.getElementById('modalOverlay').classList.remove('active');
+      document.getElementById('requestModal').classList.remove('active');
+      document.body.style.overflow = '';
+    }
+
+    function submitRequest(type) {
+      closeModal();
+      showToast('✓ ' + type + ' request sent to reception!');
+    }
+
+    function showToast(msg) {
+      const toast = document.getElementById('toast');
+      toast.textContent = msg;
+      toast.classList.add('visible');
+      setTimeout(() => toast.classList.remove('visible'), 3000);
+    }
+  </script>
+</body>
+</html>

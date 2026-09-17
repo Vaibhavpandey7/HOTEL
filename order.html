@@ -1,0 +1,526 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>HOTEL — Order Food</title>
+  <meta name="description" content="Browse the menu and order food at HOTEL, Dehradun. Scan the QR code at your table to place an order.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Playfair+Display:wght@400;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="order.css">
+</head>
+<body>
+
+  <!-- ===== HEADER ===== -->
+  <header class="order-header">
+    <div class="order-header-inner">
+      <a href="index.html" class="order-logo" style="text-decoration:none;color:var(--gold);">HOTEL</a>
+      <div style="display:flex;align-items:center;gap:10px;">
+        <a href="index.html" style="font-size:0.8rem;color:rgba(255,255,255,0.75);text-decoration:none;font-weight:500;">← Main Site</a>
+        <div class="order-table-badge" id="tableBadge">Table 7</div>
+      </div>
+    </div>
+  </header>
+
+  <!-- ===== WELCOME ===== -->
+  <div class="order-welcome">
+    <h1>Welcome to <em>The Grand Kitchen</em></h1>
+    <p>Browse our menu, add dishes to your order, and pay — all from your table.</p>
+  </div>
+
+  <!-- ===== CATEGORY TABS ===== -->
+  <div class="category-tabs">
+    <div class="category-tabs-inner" id="categoryTabs">
+      <button class="cat-tab active" data-cat="starters">Starters</button>
+      <button class="cat-tab" data-cat="mains">Main Course</button>
+      <button class="cat-tab" data-cat="breads">Breads & Rice</button>
+      <button class="cat-tab" data-cat="desserts">Desserts</button>
+      <button class="cat-tab" data-cat="beverages">Beverages</button>
+    </div>
+  </div>
+
+  <!-- ===== MENU CONTENT ===== -->
+  <div class="menu-content" id="menuContent">
+    <!-- Populated by JS -->
+  </div>
+
+  <!-- ===== STICKY CART BAR ===== -->
+  <div class="cart-bar" id="cartBar">
+    <div class="cart-bar-inner" onclick="openCart()">
+      <div class="cart-bar-left">
+        <div class="cart-count-badge" id="cartCountBadge">0</div>
+        <div class="cart-bar-text" id="cartBarText">View Order</div>
+      </div>
+      <div class="cart-bar-total" id="cartBarTotal">₹0</div>
+    </div>
+  </div>
+
+  <!-- ===== CART DRAWER ===== -->
+  <div class="cart-overlay" id="cartOverlay" onclick="closeCart()"></div>
+  <div class="cart-drawer" id="cartDrawer">
+    <div class="cart-drawer-handle"><span></span></div>
+    <div class="cart-drawer-header">
+      <h2>Your Order</h2>
+      <button class="cart-close-btn" onclick="closeCart()">&times;</button>
+    </div>
+    <div class="cart-items-list" id="cartItemsList">
+      <!-- Populated by JS -->
+    </div>
+    <div class="cart-summary" id="cartSummary">
+      <!-- Populated by JS -->
+    </div>
+    <button class="cart-checkout-btn" id="checkoutBtn" onclick="openPayment()">
+      Proceed to Payment ✦
+    </button>
+  </div>
+
+  <!-- ===== PAYMENT SCREEN ===== -->
+  <div class="payment-screen" id="paymentScreen">
+    <div class="payment-header">
+      <button class="payment-back-btn" onclick="closePayment()">←</button>
+      <h2>Payment</h2>
+    </div>
+    <div class="payment-body">
+      <div class="payment-amount-card">
+        <div class="payment-amount-label">Total Amount</div>
+        <div class="payment-amount-value" id="paymentTotal">₹0</div>
+      </div>
+
+      <div class="payment-methods">
+        <h3>Select Payment Method</h3>
+        <div class="payment-method-card selected" data-method="upi" onclick="selectPayment(this)">
+          <div class="payment-method-icon">📱</div>
+          <div class="payment-method-info">
+            <h4>UPI Payment</h4>
+            <p>Google Pay, PhonePe, Paytm, or any UPI app</p>
+          </div>
+          <div class="payment-method-radio"></div>
+        </div>
+        <div class="payment-method-card" data-method="card" onclick="selectPayment(this)">
+          <div class="payment-method-icon">💳</div>
+          <div class="payment-method-info">
+            <h4>Credit / Debit Card</h4>
+            <p>Visa, Mastercard, RuPay</p>
+          </div>
+          <div class="payment-method-radio"></div>
+        </div>
+        <div class="payment-method-card" data-method="cash" onclick="selectPayment(this)">
+          <div class="payment-method-icon">💵</div>
+          <div class="payment-method-info">
+            <h4>Pay at Counter</h4>
+            <p>Cash or card payment at the reception</p>
+          </div>
+          <div class="payment-method-radio"></div>
+        </div>
+      </div>
+
+      <button class="pay-now-btn" id="payNowBtn" onclick="processPayment()">
+        Pay Now ✦
+      </button>
+    </div>
+  </div>
+
+  <!-- ===== PAYMENT PROCESSING ===== -->
+  <div class="payment-processing" id="paymentProcessing">
+    <div class="spinner"></div>
+    <p id="processingText">Processing your payment...</p>
+  </div>
+
+  <!-- ===== ORDER CONFIRMATION ===== -->
+  <div class="order-confirmed" id="orderConfirmed">
+    <div class="order-confirmed-inner">
+      <div class="success-icon">✓</div>
+      <h2>Order Placed!</h2>
+      <p class="order-confirmed-sub">Your order has been sent to the kitchen. Sit back and relax — your food will be served shortly.</p>
+      <div class="order-id-badge" id="orderIdBadge">ORDER #HT-000000</div>
+      <div class="order-receipt" id="orderReceipt">
+        <!-- Populated by JS -->
+      </div>
+      <div class="order-confirmed-note">
+        <strong>Estimated preparation time:</strong> 20–30 minutes.<br>
+        Your server will bring each dish as it is ready. For any changes, please speak to your server directly.
+      </div>
+      <button class="order-again-btn" onclick="orderAgain()">Order More Items ✦</button>
+    </div>
+  </div>
+
+  <!-- ===== JAVASCRIPT ===== -->
+  <script>
+    // ===== MENU DATA =====
+    const MENU = {
+      starters: {
+        title: 'Starters',
+        emoji: '🍢',
+        items: [
+          { id: 's1', name: 'Paneer Tikka', desc: 'Chargrilled cottage cheese cubes marinated in yogurt and spices, served with mint chutney', price: 320, veg: true, emoji: '🧀' },
+          { id: 's2', name: 'Crispy Corn Chaat', desc: 'Golden fried corn kernels tossed with tangy masala, onion, and fresh coriander', price: 220, veg: true, emoji: '🌽' },
+          { id: 's3', name: 'Tandoori Mushroom', desc: 'Stuffed mushrooms grilled in the tandoor with a smoky spice rub', price: 280, veg: true, emoji: '🍄' },
+          { id: 's4', name: 'Chicken Malai Tikka', desc: 'Succulent chicken breast marinated in cream and cashew paste, charcoal-grilled', price: 360, veg: false, emoji: '🍗' },
+          { id: 's5', name: 'Tandoori Jhinga', desc: 'Jumbo prawns marinated in yogurt and red spice, smoked over charcoal', price: 480, veg: false, emoji: '🦐' },
+        ]
+      },
+      mains: {
+        title: 'Main Course',
+        emoji: '🍛',
+        items: [
+          { id: 'm1', name: 'Signature Butter Chicken', desc: 'Our house-special creamy tomato curry with tender chicken, finished with a swirl of cream', price: 420, veg: false, emoji: '🍗' },
+          { id: 'm2', name: 'Garhwali Dal Tadka', desc: 'Slow-cooked black lentils tempered with local hill spices, served with steamed rice', price: 320, veg: true, emoji: '🫘' },
+          { id: 'm3', name: 'Paneer Butter Masala', desc: 'Soft cottage cheese cubes in a rich, buttery tomato-cashew gravy', price: 360, veg: true, emoji: '🧀' },
+          { id: 'm4', name: 'Kafuli with Mandua Roti', desc: 'A beloved Garhwali spinach preparation served with traditional finger-millet flatbread', price: 280, veg: true, emoji: '🥬' },
+          { id: 'm5', name: 'Mutton Rogan Josh', desc: 'Tender mutton slow-cooked in a rich Kashmiri spice gravy with whole aromatics', price: 520, veg: false, emoji: '🍖' },
+          { id: 'm6', name: 'Chainsoo & Bhatt Ki Churkani', desc: 'Hearty Kumaoni lentil dish with black soybeans, flavoured with local herbs', price: 260, veg: true, emoji: '🫘' },
+        ]
+      },
+      breads: {
+        title: 'Breads & Rice',
+        emoji: '🍚',
+        items: [
+          { id: 'b1', name: 'Butter Naan', desc: 'Soft leavened bread brushed with butter, baked in clay tandoor', price: 60, veg: true, emoji: '🫓' },
+          { id: 'b2', name: 'Garlic Naan', desc: 'Tandoor-baked naan topped with roasted garlic and fresh coriander', price: 80, veg: true, emoji: '🧄' },
+          { id: 'b3', name: 'Laccha Paratha', desc: 'Flaky, layered whole-wheat bread with a crisp golden crust', price: 70, veg: true, emoji: '🫓' },
+          { id: 'b4', name: 'Steamed Basmati Rice', desc: 'Fluffy long-grain basmati rice, perfectly steamed', price: 120, veg: true, emoji: '🍚' },
+          { id: 'b5', name: 'Jeera Rice', desc: 'Aromatic basmati rice tempered with cumin seeds and whole spices', price: 160, veg: true, emoji: '🍚' },
+        ]
+      },
+      desserts: {
+        title: 'Desserts',
+        emoji: '🍮',
+        items: [
+          { id: 'd1', name: 'Bal Mithai', desc: 'Traditional Kumaoni chocolate fudge coated in white sugar balls', price: 180, veg: true, emoji: '🍫' },
+          { id: 'd2', name: 'Gulab Jamun', desc: 'Golden fried milk dumplings soaked in warm rose-cardamom syrup', price: 160, veg: true, emoji: '🧁' },
+          { id: 'd3', name: 'Rasmalai', desc: 'Soft paneer discs in chilled saffron-pistachio milk, delicately sweet', price: 200, veg: true, emoji: '🍮' },
+          { id: 'd4', name: 'Shahi Tukda', desc: 'Royal bread pudding layered with rabri and topped with dried fruits', price: 220, veg: true, emoji: '🍰' },
+        ]
+      },
+      beverages: {
+        title: 'Beverages',
+        emoji: '🥤',
+        items: [
+          { id: 'v1', name: 'Masala Chai', desc: 'Hot brewed tea with ginger, cardamom, and local hill spices', price: 80, veg: true, emoji: '☕' },
+          { id: 'v2', name: 'Fresh Lime Soda', desc: 'Refreshing lime soda — choose sweet, salty, or mixed', price: 100, veg: true, emoji: '🍋' },
+          { id: 'v3', name: 'Mango Lassi', desc: 'Chilled yogurt smoothie blended with Alphonso mango pulp', price: 140, veg: true, emoji: '🥭' },
+          { id: 'v4', name: 'Cold Coffee', desc: 'Blended iced coffee with cream and a hint of vanilla', price: 160, veg: true, emoji: '🧋' },
+          { id: 'v5', name: 'Mineral Water (1L)', desc: 'Packaged drinking water', price: 40, veg: true, emoji: '💧' },
+        ]
+      }
+    };
+
+    // ===== STATE =====
+    const cart = {}; // { itemId: quantity }
+
+    // ===== INIT =====
+    function init() {
+      // Parse table number from URL
+      const params = new URLSearchParams(window.location.search);
+      const table = params.get('table') || '7';
+      document.getElementById('tableBadge').textContent = table.toLowerCase().startsWith('room') ? table : 'Table ' + table;
+
+      // Render menu
+      renderMenu();
+
+      // Category tab clicks
+      document.querySelectorAll('.cat-tab').forEach(tab => {
+        tab.addEventListener('click', () => {
+          document.querySelectorAll('.cat-tab').forEach(t => t.classList.remove('active'));
+          tab.classList.add('active');
+          const cat = tab.dataset.cat;
+          const el = document.getElementById('cat-' + cat);
+          if (el) {
+            const offset = 120;
+            const pos = el.getBoundingClientRect().top + window.pageYOffset - offset;
+            window.scrollTo({ top: pos, behavior: 'smooth' });
+          }
+        });
+      });
+
+      // Update active tab on scroll
+      window.addEventListener('scroll', updateActiveTab);
+    }
+
+    function updateActiveTab() {
+      const cats = Object.keys(MENU);
+      let active = cats[0];
+      cats.forEach(cat => {
+        const el = document.getElementById('cat-' + cat);
+        if (el) {
+          const rect = el.getBoundingClientRect();
+          if (rect.top <= 140) active = cat;
+        }
+      });
+      document.querySelectorAll('.cat-tab').forEach(t => {
+        t.classList.toggle('active', t.dataset.cat === active);
+      });
+      // Scroll tab into view
+      const activeTab = document.querySelector('.cat-tab.active');
+      if (activeTab) activeTab.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+    }
+
+    // ===== RENDER MENU =====
+    function renderMenu() {
+      const container = document.getElementById('menuContent');
+      let html = '';
+      for (const [catKey, cat] of Object.entries(MENU)) {
+        html += `<div class="menu-category" id="cat-${catKey}">`;
+        html += `<div class="menu-category-title"><span class="cat-emoji">${cat.emoji}</span> ${cat.title}</div>`;
+        cat.items.forEach(item => {
+          const qty = cart[item.id] || 0;
+          html += `
+            <div class="menu-item-card" id="item-${item.id}">
+              <div class="menu-item-thumb">${item.emoji}</div>
+              <div class="menu-item-details">
+                <div class="menu-item-name">
+                  <span class="${item.veg ? 'veg-badge' : 'non-veg-badge'}"></span>
+                  ${item.name}
+                </div>
+                <div class="menu-item-desc">${item.desc}</div>
+                <div class="menu-item-bottom">
+                  <div class="menu-item-price">₹${item.price}</div>
+                  <div id="btn-${item.id}">
+                    ${qty > 0
+                      ? `<div class="qty-controls">
+                           <button class="qty-btn" onclick="changeQty('${item.id}', -1)">−</button>
+                           <span class="qty-value">${qty}</span>
+                           <button class="qty-btn" onclick="changeQty('${item.id}', 1)">+</button>
+                         </div>`
+                      : `<button class="add-btn" onclick="addItem('${item.id}')">ADD +</button>`
+                    }
+                  </div>
+                </div>
+              </div>
+            </div>`;
+        });
+        html += '</div>';
+      }
+      container.innerHTML = html;
+    }
+
+    // ===== CART ACTIONS =====
+    function addItem(id) {
+      cart[id] = 1;
+      updateItemButton(id);
+      updateCartBar();
+    }
+
+    function changeQty(id, delta) {
+      cart[id] = (cart[id] || 0) + delta;
+      if (cart[id] <= 0) delete cart[id];
+      updateItemButton(id);
+      updateCartBar();
+    }
+
+    function updateItemButton(id) {
+      const container = document.getElementById('btn-' + id);
+      const qty = cart[id] || 0;
+      if (qty > 0) {
+        container.innerHTML = `
+          <div class="qty-controls">
+            <button class="qty-btn" onclick="changeQty('${id}', -1)">−</button>
+            <span class="qty-value">${qty}</span>
+            <button class="qty-btn" onclick="changeQty('${id}', 1)">+</button>
+          </div>`;
+      } else {
+        container.innerHTML = `<button class="add-btn" onclick="addItem('${id}')">ADD +</button>`;
+      }
+    }
+
+    function getItemById(id) {
+      for (const cat of Object.values(MENU)) {
+        const found = cat.items.find(i => i.id === id);
+        if (found) return found;
+      }
+      return null;
+    }
+
+    function getCartTotal() {
+      let total = 0;
+      for (const [id, qty] of Object.entries(cart)) {
+        const item = getItemById(id);
+        if (item) total += item.price * qty;
+      }
+      return total;
+    }
+
+    function getCartCount() {
+      return Object.values(cart).reduce((a, b) => a + b, 0);
+    }
+
+    function updateCartBar() {
+      const count = getCartCount();
+      const total = getCartTotal();
+      const bar = document.getElementById('cartBar');
+
+      if (count > 0) {
+        bar.classList.add('visible');
+        document.getElementById('cartCountBadge').textContent = count;
+        document.getElementById('cartBarText').textContent = count === 1 ? '1 item' : count + ' items';
+        document.getElementById('cartBarTotal').textContent = '₹' + total.toLocaleString('en-IN');
+      } else {
+        bar.classList.remove('visible');
+      }
+    }
+
+    // ===== CART DRAWER =====
+    function openCart() {
+      renderCartDrawer();
+      document.getElementById('cartOverlay').classList.add('active');
+      document.getElementById('cartDrawer').classList.add('active');
+      document.body.style.overflow = 'hidden';
+    }
+
+    function closeCart() {
+      document.getElementById('cartOverlay').classList.remove('active');
+      document.getElementById('cartDrawer').classList.remove('active');
+      document.body.style.overflow = '';
+    }
+
+    function renderCartDrawer() {
+      const list = document.getElementById('cartItemsList');
+      const summary = document.getElementById('cartSummary');
+      let itemsHtml = '';
+      let subtotal = 0;
+
+      for (const [id, qty] of Object.entries(cart)) {
+        const item = getItemById(id);
+        if (!item) continue;
+        const lineTotal = item.price * qty;
+        subtotal += lineTotal;
+        itemsHtml += `
+          <div class="cart-item-row">
+            <div class="cart-item-info">
+              <div class="cart-item-name">${item.emoji} ${item.name}</div>
+              <div class="cart-item-unit">₹${item.price} each</div>
+            </div>
+            <div class="cart-item-qty">
+              <div class="qty-controls">
+                <button class="qty-btn" onclick="cartChangeQty('${id}', -1)">−</button>
+                <span class="qty-value">${qty}</span>
+                <button class="qty-btn" onclick="cartChangeQty('${id}', 1)">+</button>
+              </div>
+            </div>
+            <div class="cart-item-total">₹${lineTotal.toLocaleString('en-IN')}</div>
+          </div>`;
+      }
+
+      if (!itemsHtml) {
+        itemsHtml = '<p style="text-align:center; color: var(--text-light); padding: 32px 0;">Your order is empty</p>';
+      }
+
+      list.innerHTML = itemsHtml;
+
+      const gst = Math.round(subtotal * 0.05);
+      const total = subtotal + gst;
+
+      summary.innerHTML = `
+        <div class="cart-summary-row"><span>Subtotal</span><span>₹${subtotal.toLocaleString('en-IN')}</span></div>
+        <div class="cart-summary-row"><span>GST (5%)</span><span>₹${gst.toLocaleString('en-IN')}</span></div>
+        <div class="cart-summary-row total"><span>Total</span><span>₹${total.toLocaleString('en-IN')}</span></div>
+      `;
+    }
+
+    function cartChangeQty(id, delta) {
+      changeQty(id, delta);
+      if (getCartCount() === 0) {
+        closeCart();
+      } else {
+        renderCartDrawer();
+      }
+    }
+
+    // ===== PAYMENT =====
+    function openPayment() {
+      closeCart();
+      const subtotal = getCartTotal();
+      const gst = Math.round(subtotal * 0.05);
+      const total = subtotal + gst;
+      document.getElementById('paymentTotal').textContent = '₹' + total.toLocaleString('en-IN');
+      document.getElementById('paymentScreen').classList.add('active');
+      document.body.style.overflow = 'hidden';
+    }
+
+    function closePayment() {
+      document.getElementById('paymentScreen').classList.remove('active');
+      document.body.style.overflow = '';
+    }
+
+    function selectPayment(el) {
+      document.querySelectorAll('.payment-method-card').forEach(c => c.classList.remove('selected'));
+      el.classList.add('selected');
+    }
+
+    function processPayment() {
+      const method = document.querySelector('.payment-method-card.selected').dataset.method;
+      document.getElementById('paymentScreen').classList.remove('active');
+      const processing = document.getElementById('paymentProcessing');
+      processing.classList.add('active');
+
+      const texts = method === 'cash'
+        ? ['Placing your order...', 'Sending to kitchen...', 'Almost done...']
+        : ['Processing your payment...', 'Verifying transaction...', 'Confirming order...'];
+
+      let i = 0;
+      document.getElementById('processingText').textContent = texts[0];
+      const interval = setInterval(() => {
+        i++;
+        if (i < texts.length) {
+          document.getElementById('processingText').textContent = texts[i];
+        }
+      }, 800);
+
+      setTimeout(() => {
+        clearInterval(interval);
+        processing.classList.remove('active');
+        showConfirmation(method);
+      }, 2500);
+    }
+
+    function showConfirmation(method) {
+      const orderId = 'HT-' + Math.floor(100000 + Math.random() * 900000);
+      document.getElementById('orderIdBadge').textContent = 'ORDER #' + orderId;
+
+      const receipt = document.getElementById('orderReceipt');
+      let html = '<h3>Order Summary</h3>';
+      let subtotal = 0;
+
+      for (const [id, qty] of Object.entries(cart)) {
+        const item = getItemById(id);
+        if (!item) continue;
+        const lineTotal = item.price * qty;
+        subtotal += lineTotal;
+        html += `
+          <div class="receipt-item">
+            <div class="receipt-item-name">${item.name} <span>× ${qty}</span></div>
+            <div class="receipt-item-price">₹${lineTotal.toLocaleString('en-IN')}</div>
+          </div>`;
+      }
+
+      const gst = Math.round(subtotal * 0.05);
+      const total = subtotal + gst;
+      const payLabel = method === 'upi' ? 'UPI' : method === 'card' ? 'Card' : 'Pay at Counter';
+
+      html += `
+        <div class="receipt-item" style="font-size:0.82rem; color:var(--text-light);">
+          <div>GST (5%)</div><div class="receipt-item-price" style="color:var(--text-light);">₹${gst.toLocaleString('en-IN')}</div>
+        </div>
+        <div class="receipt-total"><span>Total (${payLabel})</span><span>₹${total.toLocaleString('en-IN')}</span></div>
+      `;
+      receipt.innerHTML = html;
+
+      document.getElementById('orderConfirmed').classList.add('active');
+      document.body.style.overflow = '';
+    }
+
+    function orderAgain() {
+      // Reset everything
+      Object.keys(cart).forEach(k => delete cart[k]);
+      document.getElementById('orderConfirmed').classList.remove('active');
+      renderMenu();
+      updateCartBar();
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    // ===== START =====
+    init();
+  </script>
+</body>
+</html>

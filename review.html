@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>HOTEL — Share Your Experience</title>
+  <meta name="description" content="Tell us about your stay at HOTEL, Dehradun. Your feedback helps us serve you better.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Playfair+Display:wght@400;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --green-dark: #1B4332; --green-mid: #2D5A3D; --gold: #C9A227; --gold-light: #D4AF37;
+      --gold-pale: #E8D48B; --ivory: #FAF6EE; --cream: #F5F0E3; --charcoal: #2C2C2C;
+      --text-body: #3A3A3A; --text-light: #6B6B6B; --white: #FFFFFF; --success: #27AE60;
+      --shadow-sm: 0 2px 8px rgba(0,0,0,0.08); --shadow-md: 0 4px 20px rgba(0,0,0,0.12);
+      --radius: 12px; --radius-lg: 20px; --transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    *,*::before,*::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body { font-family: 'Inter', sans-serif; background: var(--ivory); color: var(--text-body); line-height: 1.6; min-height: 100vh; }
+    h1,h2,h3 { font-family: 'Playfair Display', serif; color: var(--green-dark); line-height: 1.2; }
+
+    .r-header { background: var(--green-dark); padding: 16px 20px; }
+    .r-header-inner { max-width: 540px; margin: 0 auto; display: flex; align-items: center; justify-content: center; }
+    .r-logo { font-family: 'Playfair Display', serif; font-size: 1.3rem; font-weight: 700; color: var(--gold); }
+
+    .r-hero { background: linear-gradient(135deg, var(--green-dark), var(--green-mid)); color: var(--white); padding: 32px 20px 36px; text-align: center; }
+    .r-hero h1 { color: var(--white); font-size: 1.6rem; margin-bottom: 8px; }
+    .r-hero h1 em { font-style: normal; color: var(--gold); }
+    .r-hero p { color: rgba(255,255,255,0.7); font-size: 0.9rem; max-width: 400px; margin: 0 auto; }
+
+    .r-content { max-width: 540px; margin: 0 auto; padding: 28px 20px 40px; }
+
+    /* Star Rating */
+    .r-rating-section { text-align: center; margin-bottom: 32px; }
+    .r-rating-label { font-weight: 700; font-size: 1rem; color: var(--charcoal); margin-bottom: 12px; }
+    .r-stars { display: flex; justify-content: center; gap: 8px; margin-bottom: 8px; }
+    .r-star { font-size: 2.4rem; cursor: pointer; transition: all var(--transition); filter: grayscale(1) opacity(0.3); }
+    .r-star.active { filter: none; transform: scale(1.1); }
+    .r-star:hover { transform: scale(1.2); }
+    .r-rating-text { font-size: 0.85rem; color: var(--text-light); min-height: 20px; }
+
+    /* Category Ratings */
+    .r-categories { background: var(--white); border-radius: var(--radius-lg); padding: 24px; margin-bottom: 24px; box-shadow: var(--shadow-sm); }
+    .r-categories h3 { font-family: 'Inter', sans-serif; font-size: 0.85rem; font-weight: 700; color: var(--text-light); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 18px; }
+    .r-cat-row { display: flex; align-items: center; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid rgba(0,0,0,0.05); }
+    .r-cat-row:last-child { border-bottom: none; }
+    .r-cat-name { font-size: 0.9rem; font-weight: 600; color: var(--charcoal); display: flex; align-items: center; gap: 8px; }
+    .r-cat-stars { display: flex; gap: 4px; }
+    .r-cat-star { font-size: 1.3rem; cursor: pointer; transition: all var(--transition); filter: grayscale(1) opacity(0.3); }
+    .r-cat-star.active { filter: none; }
+
+    /* Text feedback */
+    .r-text-section { margin-bottom: 24px; }
+    .r-text-section label { display: block; font-weight: 700; font-size: 0.95rem; color: var(--charcoal); margin-bottom: 8px; }
+    .r-text-section textarea { width: 100%; min-height: 100px; padding: 14px 16px; border: 1.5px solid #D5D0C4; border-radius: var(--radius); font-family: 'Inter', sans-serif; font-size: 0.95rem; resize: vertical; transition: border-color var(--transition); background: var(--white); }
+    .r-text-section textarea:focus { outline: none; border-color: var(--gold); box-shadow: 0 0 0 3px rgba(201,162,39,0.15); }
+
+    /* Guest info */
+    .r-guest-section { background: var(--white); border-radius: var(--radius-lg); padding: 24px; margin-bottom: 24px; box-shadow: var(--shadow-sm); }
+    .r-guest-section h3 { font-family: 'Inter', sans-serif; font-size: 0.85rem; font-weight: 700; color: var(--text-light); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 16px; }
+    .r-guest-row { margin-bottom: 14px; }
+    .r-guest-row label { display: block; font-size: 0.82rem; font-weight: 700; color: var(--text-body); margin-bottom: 5px; }
+    .r-guest-row input { width: 100%; padding: 12px 14px; border: 1.5px solid #D5D0C4; border-radius: 8px; font-family: 'Inter', sans-serif; font-size: 0.95rem; transition: border-color var(--transition); }
+    .r-guest-row input:focus { outline: none; border-color: var(--gold); box-shadow: 0 0 0 3px rgba(201,162,39,0.15); }
+
+    /* Submit */
+    .r-submit-btn { display: flex; align-items: center; justify-content: center; gap: 8px; width: 100%; padding: 16px; background: linear-gradient(135deg, var(--gold), var(--gold-light)); color: var(--green-dark); font-weight: 800; font-size: 1.05rem; border: none; border-radius: 14px; cursor: pointer; transition: all var(--transition); box-shadow: 0 4px 15px rgba(201,162,39,0.3); }
+    .r-submit-btn:hover { transform: translateY(-2px); box-shadow: 0 6px 25px rgba(201,162,39,0.45); }
+
+    /* Thank You */
+    .r-thankyou { display: none; text-align: center; padding: 60px 20px; }
+    .r-thankyou.active { display: block; }
+    .r-thankyou-icon { width: 90px; height: 90px; border-radius: 50%; background: linear-gradient(135deg, var(--success), #2ECC71); display: flex; align-items: center; justify-content: center; margin: 0 auto 24px; font-size: 2.8rem; color: var(--white); animation: bounceIn 0.6s ease-out; box-shadow: 0 8px 25px rgba(39,174,96,0.3); }
+    @keyframes bounceIn { 0%{transform:scale(0)} 50%{transform:scale(1.2)} 100%{transform:scale(1)} }
+    .r-thankyou h2 { font-size: 1.6rem; margin-bottom: 12px; }
+    .r-thankyou p { color: var(--text-light); font-size: 0.95rem; max-width: 380px; margin: 0 auto 24px; }
+    .r-thankyou-stars { font-size: 2rem; letter-spacing: 4px; margin-bottom: 20px; }
+    .r-back-btn { display: inline-flex; align-items: center; gap: 8px; background: transparent; color: var(--green-dark); border: 2px solid var(--green-dark); padding: 12px 28px; border-radius: 50px; font-weight: 700; font-size: 0.95rem; cursor: pointer; transition: all var(--transition); }
+    .r-back-btn:hover { background: var(--green-dark); color: var(--white); }
+
+    .r-form { }
+  </style>
+</head>
+<body>
+  <header class="r-header">
+    <div class="r-header-inner" style="display:flex;align-items:center;justify-content:space-between;">
+      <a href="index.html" class="r-logo" style="text-decoration:none;color:var(--gold);">HOTEL</a>
+      <a href="index.html" style="font-size:0.8rem;color:rgba(255,255,255,0.75);text-decoration:none;font-weight:500;">← Main Site</a>
+    </div>
+  </header>
+
+  <div class="r-hero">
+    <h1>Share Your <em>Experience</em></h1>
+    <p>We value your feedback — it helps us make every stay better than the last.</p>
+  </div>
+
+  <div class="r-content">
+    <!-- Review Form -->
+    <div class="r-form" id="reviewForm">
+      <!-- Overall Rating -->
+      <div class="r-rating-section">
+        <div class="r-rating-label">How was your overall stay?</div>
+        <div class="r-stars" id="overallStars">
+          <span class="r-star" data-val="1" onclick="setOverall(1)">⭐</span>
+          <span class="r-star" data-val="2" onclick="setOverall(2)">⭐</span>
+          <span class="r-star" data-val="3" onclick="setOverall(3)">⭐</span>
+          <span class="r-star" data-val="4" onclick="setOverall(4)">⭐</span>
+          <span class="r-star" data-val="5" onclick="setOverall(5)">⭐</span>
+        </div>
+        <div class="r-rating-text" id="ratingText">Tap a star to rate</div>
+      </div>
+
+      <!-- Category Ratings -->
+      <div class="r-categories">
+        <h3>Rate by Category</h3>
+        <div class="r-cat-row">
+          <div class="r-cat-name">🛏️ Room & Comfort</div>
+          <div class="r-cat-stars" data-cat="room">
+            <span class="r-cat-star" data-val="1" onclick="setCat('room',1)">⭐</span>
+            <span class="r-cat-star" data-val="2" onclick="setCat('room',2)">⭐</span>
+            <span class="r-cat-star" data-val="3" onclick="setCat('room',3)">⭐</span>
+            <span class="r-cat-star" data-val="4" onclick="setCat('room',4)">⭐</span>
+            <span class="r-cat-star" data-val="5" onclick="setCat('room',5)">⭐</span>
+          </div>
+        </div>
+        <div class="r-cat-row">
+          <div class="r-cat-name">🧹 Cleanliness</div>
+          <div class="r-cat-stars" data-cat="clean">
+            <span class="r-cat-star" data-val="1" onclick="setCat('clean',1)">⭐</span>
+            <span class="r-cat-star" data-val="2" onclick="setCat('clean',2)">⭐</span>
+            <span class="r-cat-star" data-val="3" onclick="setCat('clean',3)">⭐</span>
+            <span class="r-cat-star" data-val="4" onclick="setCat('clean',4)">⭐</span>
+            <span class="r-cat-star" data-val="5" onclick="setCat('clean',5)">⭐</span>
+          </div>
+        </div>
+        <div class="r-cat-row">
+          <div class="r-cat-name">🍽️ Food & Dining</div>
+          <div class="r-cat-stars" data-cat="food">
+            <span class="r-cat-star" data-val="1" onclick="setCat('food',1)">⭐</span>
+            <span class="r-cat-star" data-val="2" onclick="setCat('food',2)">⭐</span>
+            <span class="r-cat-star" data-val="3" onclick="setCat('food',3)">⭐</span>
+            <span class="r-cat-star" data-val="4" onclick="setCat('food',4)">⭐</span>
+            <span class="r-cat-star" data-val="5" onclick="setCat('food',5)">⭐</span>
+          </div>
+        </div>
+        <div class="r-cat-row">
+          <div class="r-cat-name">👨‍💼 Staff & Service</div>
+          <div class="r-cat-stars" data-cat="staff">
+            <span class="r-cat-star" data-val="1" onclick="setCat('staff',1)">⭐</span>
+            <span class="r-cat-star" data-val="2" onclick="setCat('staff',2)">⭐</span>
+            <span class="r-cat-star" data-val="3" onclick="setCat('staff',3)">⭐</span>
+            <span class="r-cat-star" data-val="4" onclick="setCat('staff',4)">⭐</span>
+            <span class="r-cat-star" data-val="5" onclick="setCat('staff',5)">⭐</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Text Feedback -->
+      <div class="r-text-section">
+        <label>Anything else you'd like to share?</label>
+        <textarea id="feedbackText" placeholder="Tell us what made your stay special, or what we could improve..."></textarea>
+      </div>
+
+      <!-- Guest Info -->
+      <div class="r-guest-section">
+        <h3>Your Details (Optional)</h3>
+        <div class="r-guest-row">
+          <label>Name</label>
+          <input type="text" id="reviewName" placeholder="Your name">
+        </div>
+        <div class="r-guest-row">
+          <label>Email</label>
+          <input type="email" id="reviewEmail" placeholder="your.email@example.com">
+        </div>
+      </div>
+
+      <button class="r-submit-btn" onclick="submitReview()">Submit Feedback ✦</button>
+    </div>
+
+    <!-- Thank You Screen -->
+    <div class="r-thankyou" id="thankYou">
+      <div class="r-thankyou-icon">❤️</div>
+      <h2>Thank You!</h2>
+      <div class="r-thankyou-stars" id="thankYouStars">⭐⭐⭐⭐⭐</div>
+      <p>Your feedback means the world to us. We are always working to make your next visit even more special.</p>
+      <button class="r-back-btn" onclick="window.location.href='index.html'">Back to HOTEL</button>
+    </div>
+  </div>
+
+  <script>
+    let overallRating = 0;
+    const catRatings = { room: 0, clean: 0, food: 0, staff: 0 };
+    const ratingLabels = ['', 'Poor', 'Below Average', 'Good', 'Very Good', 'Excellent!'];
+
+    function setOverall(val) {
+      overallRating = val;
+      document.querySelectorAll('#overallStars .r-star').forEach(s => {
+        s.classList.toggle('active', parseInt(s.dataset.val) <= val);
+      });
+      document.getElementById('ratingText').textContent = ratingLabels[val];
+    }
+
+    function setCat(cat, val) {
+      catRatings[cat] = val;
+      document.querySelectorAll(`.r-cat-stars[data-cat="${cat}"] .r-cat-star`).forEach(s => {
+        s.classList.toggle('active', parseInt(s.dataset.val) <= val);
+      });
+    }
+
+    function submitReview() {
+      if (overallRating === 0) {
+        alert('Please tap a star to rate your overall experience.');
+        return;
+      }
+      const stars = '⭐'.repeat(overallRating);
+      document.getElementById('thankYouStars').textContent = stars;
+      document.getElementById('reviewForm').style.display = 'none';
+      document.getElementById('thankYou').classList.add('active');
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+  </script>
+</body>
+</html>
