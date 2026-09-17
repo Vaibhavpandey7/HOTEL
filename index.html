@@ -397,7 +397,7 @@
           </div>
         </div>
         <div class="qr-target-switcher">
-          <button class="qr-switch-btn active" id="btnLanIp" onclick="switchQrHost('lan')">📶 Phone Wi-Fi (172.16.69.63)</button>
+          <button class="qr-switch-btn active" id="btnLanIp" onclick="switchQrHost('lan')">📶 Phone Wi-Fi (172.16.71.216)</button>
           <button class="qr-switch-btn" id="btnLocalhost" onclick="switchQrHost('local')">💻 Laptop (localhost)</button>
         </div>
       </div>
@@ -863,7 +863,7 @@
 
     // ===== SMART QR CODE GENERATION =====
     let currentQrMode = (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') ? 'lan' : 'current';
-    const LAN_IP = '172.16.69.63';
+    const LAN_IP = '172.16.71.216';
     const PORT = window.location.port || '8080';
 
     function getBaseUrl() {
