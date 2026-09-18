@@ -476,18 +476,20 @@
     }
 
     function showConfirmation(method) {
-      const orderId = 'HT-' + Math.floor(100000 + Math.random() * 900000);
+      const orderId = 'KOT-' + Math.floor(1000 + Math.random() * 9000);
       document.getElementById('orderIdBadge').textContent = 'ORDER #' + orderId;
 
       const receipt = document.getElementById('orderReceipt');
       let html = '<h3>Order Summary</h3>';
       let subtotal = 0;
+      const itemsList = [];
 
       for (const [id, qty] of Object.entries(cart)) {
         const item = getItemById(id);
         if (!item) continue;
         const lineTotal = item.price * qty;
         subtotal += lineTotal;
+        itemsList.push({ name: item.name, qty: qty, price: item.price });
         html += `
           <div class="receipt-item">
             <div class="receipt-item-name">${item.name} <span>× ${qty}</span></div>
@@ -498,6 +500,34 @@
       const gst = Math.round(subtotal * 0.05);
       const total = subtotal + gst;
       const payLabel = method === 'upi' ? 'UPI' : method === 'card' ? 'Card' : 'Pay at Counter';
+
+      // Send order to TapStay Live Kitchen KOT
+      const params = new URLSearchParams(window.location.search);
+      const tableVal = params.get('table') || '7';
+      const isRoom = tableVal.toLowerCase().startsWith('room');
+      const sourceType = isRoom ? 'room' : 'table';
+      const sourceNum = isRoom ? tableVal.replace(/room/i, '').trim() || '204' : tableVal;
+
+      fetch('/api/orders', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          source_type: sourceType,
+          source_number: sourceNum,
+          items: itemsList,
+          subtotal: subtotal,
+          tax: gst,
+          total: total,
+          payment_method: method
+        })
+      })
+      .then(r => r.json())
+      .then(res => {
+        if (res.success && res.order_ref) {
+          document.getElementById('orderIdBadge').textContent = 'ORDER #' + res.order_ref;
+        }
+      })
+      .catch(err => console.log('TapStay order sync: local fallback'));
 
       html += `
         <div class="receipt-item" style="font-size:0.82rem; color:var(--text-light);">

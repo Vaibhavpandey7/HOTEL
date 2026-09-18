@@ -340,8 +340,36 @@
     }
 
     function submitRequest(type) {
+      // Gather any text from textarea or select in modal
+      const modalBody = document.getElementById('modalBody');
+      const selects = Array.from(modalBody.querySelectorAll('select')).map(s => s.value).join(', ');
+      const textarea = modalBody.querySelector('textarea');
+      const textVal = textarea ? textarea.value.trim() : '';
+      const details = [selects, textVal].filter(Boolean).join(' — ');
+
+      let reqType = 'other';
+      const lowType = type.toLowerCase();
+      if (lowType.includes('housekeeping')) reqType = 'cleaning';
+      else if (lowType.includes('towel')) reqType = 'towels';
+      else if (lowType.includes('laundry')) reqType = 'laundry';
+      else if (lowType.includes('check-out') || lowType.includes('checkout')) reqType = 'late_checkout';
+      else if (lowType.includes('maintenance')) reqType = 'maintenance';
+
+      fetch('/api/concierge', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          room_number: room,
+          request_type: reqType,
+          details: details || type,
+          priority: lowType.includes('maintenance') ? 'urgent' : 'normal'
+        })
+      })
+      .then(r => r.json())
+      .catch(err => console.log('TapStay concierge sync offline'));
+
       closeModal();
-      showToast('✓ ' + type + ' request sent to reception!');
+      showToast('✓ ' + type + ' request sent to reception & staff!');
     }
 
     function showToast(msg) {

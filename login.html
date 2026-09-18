@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Staff Login — TapStay Hospitality OS</title>
+  <meta name="description" content="Secure Staff & Management Portal for HOTEL powered by TapStay.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Playfair+Display:wght@500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --green-dark: #1B4332;
+      --green-mid: #2D5A3D;
+      --green-deep: #0e271c;
+      --gold: #C9A227;
+      --gold-light: #D4AF37;
+      --gold-pale: #E8D48B;
+      --ivory: #FAF6EE;
+      --cream: #F5F0E3;
+      --charcoal: #2C2C2C;
+      --text-muted: #8E9297;
+      --white: #FFFFFF;
+      --shadow-lg: 0 12px 40px rgba(0,0,0,0.35);
+      --radius: 14px;
+      --radius-lg: 20px;
+      --transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'Inter', sans-serif;
+      min-height: 100vh;
+      background: radial-gradient(circle at top, var(--green-mid) 0%, var(--green-deep) 100%);
+      color: var(--white);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+      position: relative;
+      overflow-x: hidden;
+    }
+
+    /* Ambient background ornamentation */
+    .bg-pattern {
+      position: absolute;
+      inset: 0;
+      background-image: radial-gradient(rgba(201, 162, 39, 0.08) 1px, transparent 1px);
+      background-size: 24px 24px;
+      pointer-events: none;
+    }
+
+    .login-container {
+      width: 100%;
+      max-width: 440px;
+      background: rgba(27, 67, 50, 0.75);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border: 1px solid rgba(201, 162, 39, 0.3);
+      border-radius: var(--radius-lg);
+      padding: 40px 32px;
+      box-shadow: var(--shadow-lg);
+      position: relative;
+      z-index: 10;
+    }
+
+    .brand-header {
+      text-align: center;
+      margin-bottom: 30px;
+    }
+    .brand-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 4px 12px;
+      background: rgba(201, 162, 39, 0.15);
+      border: 1px solid rgba(201, 162, 39, 0.4);
+      border-radius: 50px;
+      font-size: 0.75rem;
+      font-weight: 700;
+      color: var(--gold-pale);
+      text-transform: uppercase;
+      letter-spacing: 1.5px;
+      margin-bottom: 12px;
+    }
+    .brand-title {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.85rem;
+      color: var(--gold);
+      margin-bottom: 4px;
+    }
+    .brand-subtitle {
+      font-size: 0.85rem;
+      color: rgba(255, 255, 255, 0.75);
+    }
+
+    .form-group {
+      margin-bottom: 20px;
+    }
+    .form-label {
+      display: block;
+      font-size: 0.8rem;
+      font-weight: 600;
+      color: var(--gold-pale);
+      text-transform: uppercase;
+      letter-spacing: 0.8px;
+      margin-bottom: 8px;
+    }
+    .input-wrapper {
+      position: relative;
+    }
+    .form-input {
+      width: 100%;
+      padding: 13px 16px;
+      background: rgba(14, 39, 28, 0.6);
+      border: 1.5px solid rgba(201, 162, 39, 0.3);
+      border-radius: var(--radius);
+      color: var(--white);
+      font-size: 0.95rem;
+      outline: none;
+      transition: all var(--transition);
+      font-family: 'Inter', sans-serif;
+    }
+    .form-input:focus {
+      border-color: var(--gold);
+      box-shadow: 0 0 0 3px rgba(201, 162, 39, 0.2);
+      background: rgba(14, 39, 28, 0.9);
+    }
+
+    .btn-submit {
+      width: 100%;
+      padding: 14px;
+      background: linear-gradient(135deg, var(--gold), var(--gold-light));
+      color: var(--green-dark);
+      border: none;
+      border-radius: var(--radius);
+      font-size: 1rem;
+      font-weight: 700;
+      cursor: pointer;
+      box-shadow: 0 4px 15px rgba(201, 162, 39, 0.35);
+      transition: all var(--transition);
+      margin-top: 10px;
+    }
+    .btn-submit:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 22px rgba(201, 162, 39, 0.5);
+    }
+    .btn-submit:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    .error-box {
+      display: none;
+      background: rgba(235, 87, 87, 0.15);
+      border: 1px solid rgba(235, 87, 87, 0.4);
+      color: #ff9999;
+      padding: 10px 14px;
+      border-radius: 8px;
+      font-size: 0.85rem;
+      margin-bottom: 18px;
+      text-align: center;
+    }
+
+    .quick-roles {
+      margin-top: 26px;
+      padding-top: 20px;
+      border-top: 1px solid rgba(201, 162, 39, 0.2);
+      text-align: center;
+    }
+    .quick-roles-title {
+      font-size: 0.75rem;
+      color: rgba(255, 255, 255, 0.6);
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      margin-bottom: 10px;
+    }
+    .role-chips {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      justify-content: center;
+    }
+    .role-chip {
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      color: var(--gold-pale);
+      padding: 6px 12px;
+      border-radius: 50px;
+      font-size: 0.78rem;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .role-chip:hover {
+      background: rgba(201, 162, 39, 0.2);
+      border-color: var(--gold);
+      color: var(--white);
+    }
+
+    .back-home {
+      display: block;
+      text-align: center;
+      margin-top: 20px;
+      color: rgba(255, 255, 255, 0.6);
+      text-decoration: none;
+      font-size: 0.82rem;
+      transition: color 0.2s;
+    }
+    .back-home:hover {
+      color: var(--gold);
+    }
+  </style>
+</head>
+<body>
+
+  <div class="bg-pattern"></div>
+
+  <div class="login-container">
+    <div class="brand-header">
+      <div class="brand-badge">✦ TapStay Hospitality OS ✦</div>
+      <h1 class="brand-title">HOTEL</h1>
+      <p class="brand-subtitle">Management & Staff Operations Portal</p>
+    </div>
+
+    <div class="error-box" id="errorBox"></div>
+
+    <form id="loginForm">
+      <div class="form-group">
+        <label class="form-label" for="username">Username</label>
+        <div class="input-wrapper">
+          <input type="text" id="username" class="form-input" placeholder="admin / frontdesk / kitchen" required autofocus autocomplete="username">
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label" for="password">Password</label>
+        <div class="input-wrapper">
+          <input type="password" id="password" class="form-input" placeholder="••••••••••••" required autocomplete="current-password">
+        </div>
+      </div>
+
+      <button type="submit" class="btn-submit" id="submitBtn">Sign In to Dashboard →</button>
+    </form>
+
+    <div class="quick-roles">
+      <div class="quick-roles-title">Demo Credentials (Click to auto-fill)</div>
+      <div class="role-chips">
+        <button type="button" class="role-chip" onclick="fillCreds('admin', 'tapstay123')">Admin (GM)</button>
+        <button type="button" class="role-chip" onclick="fillCreds('frontdesk', 'frontdesk123')">Front Desk</button>
+        <button type="button" class="role-chip" onclick="fillCreds('kitchen', 'kitchen123')">Kitchen (KOT)</button>
+      </div>
+    </div>
+
+    <a href="index.html" class="back-home">← Return to Public Hotel Website</a>
+  </div>
+
+  <script>
+    function fillCreds(u, p) {
+      document.getElementById('username').value = u;
+      document.getElementById('password').value = p;
+      document.getElementById('errorBox').style.display = 'none';
+    }
+
+    // Redirect if already logged in
+    const token = localStorage.getItem('tapstay_token');
+    if (token) {
+      fetch('/api/auth/me', { headers: { 'Authorization': 'Bearer ' + token } })
+        .then(res => res.json())
+        .then(data => {
+          if (data.success) {
+            window.location.href = 'admin.html';
+          }
+        })
+        .catch(() => {});
+    }
+
+    const loginForm = document.getElementById('loginForm');
+    const submitBtn = document.getElementById('submitBtn');
+    const errorBox = document.getElementById('errorBox');
+
+    loginForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      errorBox.style.display = 'none';
+      submitBtn.disabled = true;
+      submitBtn.textContent = 'Authenticating...';
+
+      const username = document.getElementById('username').value.trim();
+      const password = document.getElementById('password').value.trim();
+
+      try {
+        const res = await fetch('/api/auth/login', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ username, password })
+        });
+        const data = await res.json();
+
+        if (data.success) {
+          localStorage.setItem('tapstay_token', data.token);
+          localStorage.setItem('tapstay_user', JSON.stringify(data.user));
+          submitBtn.textContent = 'Access Granted ✓';
+          setTimeout(() => {
+            window.location.href = 'admin.html';
+          }, 400);
+        } else {
+          errorBox.textContent = data.error || 'Invalid credentials. Please try again.';
+          errorBox.style.display = 'block';
+          submitBtn.disabled = false;
+          submitBtn.textContent = 'Sign In to Dashboard →';
+        }
+      } catch (err) {
+        errorBox.textContent = 'Unable to connect to server. Please check your network or server status.';
+        errorBox.style.display = 'block';
+        submitBtn.disabled = false;
+        submitBtn.textContent = 'Sign In to Dashboard →';
+      }
+    });
+  </script>
+</body>
+</html>

@@ -214,6 +214,29 @@
         alert('Please tap a star to rate your overall experience.');
         return;
       }
+
+      const guestName = document.getElementById('reviewName').value.trim() || 'Valued Guest';
+      const comment = document.getElementById('feedbackText').value.trim();
+      const params = new URLSearchParams(window.location.search);
+      const roomNum = params.get('room') || '';
+
+      fetch('/api/reviews', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          guest_name: guestName,
+          room_number: roomNum,
+          overall_rating: overallRating,
+          room_rating: catRatings.room || overallRating,
+          clean_rating: catRatings.clean || overallRating,
+          food_rating: catRatings.food || overallRating,
+          staff_rating: catRatings.staff || overallRating,
+          comment: comment
+        })
+      })
+      .then(r => r.json())
+      .catch(err => console.log('Review sync fallback'));
+
       const stars = '⭐'.repeat(overallRating);
       document.getElementById('thankYouStars').textContent = stars;
       document.getElementById('reviewForm').style.display = 'none';

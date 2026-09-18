@@ -25,6 +25,7 @@
         <li><a href="#qr-tech">Smart QR</a></li>
         <li><a href="#reviews">Reviews</a></li>
         <li><a href="#contact">Contact</a></li>
+        <li><a href="login.html" style="background:rgba(201,162,39,0.15);border:1px solid var(--gold);padding:6px 14px;border-radius:50px;color:var(--gold-pale);font-weight:600;text-decoration:none;">🔒 Staff Login</a></li>
       </ul>
       <button class="hamburger" id="hamburger" aria-label="Open navigation menu">
         <span></span><span></span><span></span>
@@ -42,6 +43,7 @@
     <a href="#qr-tech" onclick="closeMobileNav()">Smart QR</a>
     <a href="#reviews" onclick="closeMobileNav()">Reviews</a>
     <a href="#contact" onclick="closeMobileNav()">Contact</a>
+    <a href="login.html" onclick="closeMobileNav()" style="color:var(--gold);">🔒 Staff Login</a>
   </div>
 
   <!-- ===== SECTION 1: HERO / HOME ===== -->
@@ -824,8 +826,37 @@
       if (!valid) return;
 
       // Generate a reference number
-      const refNum = 'HT-' + Math.floor(100000 + Math.random() * 900000);
+      const refNum = 'TS-' + Math.floor(100000 + Math.random() * 900000);
       document.getElementById('confirmationRef').textContent = 'REF: ' + refNum;
+
+      // Map room type for TapStay API
+      let typeId = 'deluxe';
+      if (roomType.includes('Garden')) typeId = 'garden';
+      else if (roomType.includes('Suite')) typeId = 'suite';
+      else if (roomType.includes('Executive')) typeId = 'executive';
+
+      // Send to TapStay live backend
+      fetch('/api/bookings', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          guest_name: name,
+          guest_phone: phone,
+          guest_email: email,
+          room_type_id: typeId,
+          guests_count: parseInt(guests) || 2,
+          checkin_date: checkin,
+          checkout_date: checkout,
+          source: 'website'
+        })
+      })
+      .then(r => r.json())
+      .then(res => {
+        if (res.success && res.ref_number) {
+          document.getElementById('confirmationRef').textContent = 'REF: ' + res.ref_number + (res.assigned_room ? ' • Room ' + res.assigned_room : '');
+        }
+      })
+      .catch(err => console.log('Booking sync offline/local mode'));
 
       // Calculate nights
       const nights = Math.round((new Date(checkout) - new Date(checkin)) / (1000 * 60 * 60 * 24));
@@ -984,12 +1015,28 @@
       // Room 4 badge
       const s4 = document.getElementById('stockRoom4');
       if (s4) {
-        s4.className = 'room-stock-tag ' + (roomInventory.room4 <= 1 ? 'low' : 'avail');
-        s4.innerHTML = (roomInventory.room4 <= 1 ? '🟡 ' : '🟢 ') +
+        s4.className = 'room-stock-tag ' + (roomInventory.room4 <= 1 ? 'critical' : roomInventory.room4 <= 2 ? 'low' : 'avail');
+        s4.innerHTML = (roomInventory.room4 <= 1 ? '🔴 ' : roomInventory.room4 <= 2 ? '🟡 ' : '🟢 ') +
           `<span id="stockCount4">${roomInventory.room4}</span> ` +
-          (roomInventory.room4 === 0 ? 'Sold Out' : 'Available');
+          (roomInventory.room4 === 0 ? 'Sold Out' : roomInventory.room4 === 1 ? 'Only 1 Left' : 'Available');
       }
     }
+
+    // Sync live availability from TapStay backend
+    fetch('/api/rooms/summary')
+      .then(r => r.json())
+      .then(data => {
+        if (data.success && data.categories) {
+          data.categories.forEach(cat => {
+            if (cat.room_type_id === 'deluxe') roomInventory.room1 = cat.available_count;
+            if (cat.room_type_id === 'garden') roomInventory.room2 = cat.available_count;
+            if (cat.room_type_id === 'suite') roomInventory.room3 = cat.available_count;
+            if (cat.room_type_id === 'executive') roomInventory.room4 = cat.available_count;
+          });
+          updateRoomInventoryUI();
+        }
+      })
+      .catch(() => {});
 
     // 14 Dining Tables data
     const tablesData = [
